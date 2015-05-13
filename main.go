@@ -17,28 +17,49 @@ func checkError(err error) {
 }
 
 func main() {
-	sql_ip_port := "172.26.48.2:3306"
-	sql_user := "root"
-	sql_pwd := "root"
+	sql_ip_port := ""
+	sql_user := ""
+	sql_pwd := ""
 
-	sql_base_src := "go_test"
-	sql_base_dst := "go_test_copy"
-	sql_table := "test_table"
-	sql_id := "1,2,3,4"
+	sql_base_src := ""
+	sql_base_dst := ""
+	sql_table := ""
+	sql_id := ""
 
 	arg_num := len(os.Args)
 
 	if arg_num > 1 {
-		sql_base_src = os.Args[1]
+		sql_ip_port = os.Args[1]
+	} else {
+		fmt.Print("miss sql_ip_port")
 	}
 	if arg_num > 2 {
-		sql_base_dst = os.Args[2]
+		sql_user = os.Args[2]
+	} else {
+		fmt.Print("miss sql_user")
 	}
 	if arg_num > 3 {
-		sql_table = os.Args[3]
+		sql_pwd = os.Args[3]
+	} else {
+		fmt.Print("miss sql_pwd")
 	}
 	if arg_num > 4 {
-		sql_id = os.Args[4]
+		sql_base_src = os.Args[4]
+	} else {
+		fmt.Print("miss sql_base_src")
+	}
+	if arg_num > 5 {
+		sql_base_dst = os.Args[5]
+	} else {
+		fmt.Print("miss sql_base_dst")
+	}
+	if arg_num > 6 {
+		sql_table = os.Args[6]
+	} else {
+		fmt.Print("miss sql_table")
+	}
+	if arg_num > 7 {
+		sql_id = os.Args[7]
 	}
 
 	db, err := sql.Open("mysql", sql_user+":"+sql_pwd+"@tcp("+sql_ip_port+")/js_base")
