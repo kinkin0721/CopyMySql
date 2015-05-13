@@ -31,32 +31,32 @@ func main() {
 	if arg_num > 1 {
 		sql_ip_port = os.Args[1]
 	} else {
-		fmt.Print("miss sql_ip_port")
+		fmt.Print("miss sql_ip_port\n")
 	}
 	if arg_num > 2 {
 		sql_user = os.Args[2]
 	} else {
-		fmt.Print("miss sql_user")
+		fmt.Print("miss sql_user\n")
 	}
 	if arg_num > 3 {
 		sql_pwd = os.Args[3]
 	} else {
-		fmt.Print("miss sql_pwd")
+		fmt.Print("miss sql_pwd\n")
 	}
 	if arg_num > 4 {
 		sql_base_src = os.Args[4]
 	} else {
-		fmt.Print("miss sql_base_src")
+		fmt.Print("miss sql_base_src\n")
 	}
 	if arg_num > 5 {
 		sql_base_dst = os.Args[5]
 	} else {
-		fmt.Print("miss sql_base_dst")
+		fmt.Print("miss sql_base_dst\n")
 	}
 	if arg_num > 6 {
 		sql_table = os.Args[6]
 	} else {
-		fmt.Print("miss sql_table")
+		fmt.Print("miss sql_table\n")
 	}
 	if arg_num > 7 {
 		sql_id = os.Args[7]
