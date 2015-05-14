@@ -16,16 +16,16 @@ func checkError(err error) {
 	}
 }
 
-func main() {
-	sql_ip_port := ""
-	sql_user := ""
-	sql_pwd := ""
+var sql_ip_port string
+var sql_user string
+var sql_pwd string
 
-	sql_base_src := ""
-	sql_base_dst := ""
-	sql_table := ""
-	sql_id := ""
+var sql_base_src string
+var sql_base_dst string
+var sql_table string
+var sql_id string
 
+func setArg() {
 	arg_num := len(os.Args)
 
 	if arg_num > 1 {
@@ -61,20 +61,22 @@ func main() {
 	if arg_num > 7 {
 		sql_id = os.Args[7]
 	}
+}
+
+func main() {
+
+	setArg()
 
 	db, err := sql.Open("mysql", sql_user+":"+sql_pwd+"@tcp("+sql_ip_port+")/js_base")
 	checkError(err)
 	defer db.Close()
 
-	rows, err := db.Query("select column_name from information_schema.columns where table_schema = '" + sql_base_src + "' and table_name = '" + sql_table + "' and column_key = 'pri';")
 	var primary_key string
-	for rows.Next() {
-		err := rows.Scan(&primary_key)
-		checkError(err)
-	}
+	err = db.QueryRow("select column_name from information_schema.columns where " +
+		"table_schema = '" + sql_base_src + "' and table_name = '" + sql_table + "' and column_key = 'pri';").Scan(&primary_key)
+	checkError(err)
 
 	ids := strings.Split(sql_id, ",")
-
 	str_ids := ""
 	if sql_id != "" {
 		for i := 0; i < len(ids); i++ {
@@ -89,20 +91,17 @@ func main() {
 	rows_src, err := db.Query("select * from " + sql_base_src + "." + sql_table + str_ids + ";")
 	checkError(err)
 	defer rows_src.Close()
+
 	_, err = db.Exec("delete from " + sql_base_dst + "." + sql_table + str_ids + ";")
 	checkError(err)
-
-	colNames_src, err := rows_src.Columns()
-	readCols := make([]interface{}, len(colNames_src))
-	writeCols := make([]string, len(colNames_src))
-	for i, _ := range writeCols {
-		readCols[i] = &writeCols[i]
-	}
-
 	rows_dst, err := db.Query("select * from " + sql_base_dst + "." + sql_table + ";")
 	checkError(err)
 	defer rows_dst.Close()
+
+	colNames_src, err := rows_src.Columns()
+	checkError(err)
 	colNames_dst, err := rows_dst.Columns()
+	checkError(err)
 
 	colNames := ""
 	col_params := ""
@@ -119,6 +118,12 @@ func main() {
 	stmt, err := db.Prepare("INSERT INTO " + sql_base_dst + "." + sql_table + " ( " + colNames + " ) VALUES ( " + col_params + " );")
 	checkError(err)
 	defer stmt.Close()
+
+	readCols := make([]interface{}, len(colNames_src))
+	writeCols := make([]string, len(colNames_src))
+	for i, _ := range writeCols {
+		readCols[i] = &writeCols[i]
+	}
 
 	tx, err := db.Begin()
 	checkError(err)
